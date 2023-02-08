@@ -1,6 +1,6 @@
 # Binaries for programs and plugins
 main
-ss_parser
+ss_tracker
 *.exe
 *.exe~
 *.so
