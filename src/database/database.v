@@ -98,16 +98,23 @@ pub fn (db Database) add_user(user User) {
 	}
 }
 
+//
 // Tracker database functions
+//
 
 pub fn (db Database) user_tracker_exists(user User, tr Tracker) bool {
 	result := sql db {
 		select from Tracker where telegram_id == user.telegram_id && section_url == tr.section_url
 	}
-	if result == [] {
+	if result.len == 0 {
 		return false
 	}
-	return true
+	for r in result {
+		if r.filter == ''{
+			return true
+		}
+	}
+	return false
 }
 
 pub fn (db Database) add_user_tracker(user User, tr Tracker) bool {
@@ -120,4 +127,69 @@ pub fn (db Database) add_user_tracker(user User, tr Tracker) bool {
 	return true
 }
 
-// pub fn (db Database) load_category(user User) string{
+pub fn (db Database) update_tracker_filter_by_id(trid i64, filter string) bool {
+	sql db {
+		update Tracker set filter = filter where id == trid
+	}
+	return true
+}
+
+pub fn (db Database) get_users_by_tracker_url(url string, filter string) []User {
+	trackers := sql db {
+		select from Tracker where section_url == url
+	}
+	mut users := []User{}
+	for t in trackers {
+		if t.section_url == url{
+			if t.filter == ''{
+				users << User{
+					telegram_id: t.telegram_id
+					sub_category_name: t.subcategory_name
+					confirm_section_name: t.section_name
+				}
+			}
+			else{
+				words := t.filter.split(' ')
+				if filter.contains_any_substr(words){
+					users << User{
+						telegram_id: t.telegram_id
+						sub_category_name: t.subcategory_name
+						confirm_section_name: t.section_name
+					}
+				}
+			}
+		}
+	}
+	return users
+}
+
+pub fn (db Database) get_trackers() []Tracker {
+	trackers := sql db {
+		select from Tracker
+	}
+	return trackers
+}
+
+pub fn (db Database) delete_tracker_with_id(id i64) bool {
+	sql db{
+		delete from Tracker where id == id
+	}
+	return true
+}
+
+pub fn (db Database) get_trackers_by_id(id i64) Tracker {
+	tracker:=sql db{
+		select from Tracker where id == id
+	}
+	if tracker.id == 0{
+		return Tracker{}
+	}
+	return tracker
+}
+
+pub fn (db Database) get_trackers_by_user(user User) []Tracker {
+	data := sql db{
+		select from Tracker where telegram_id == user.telegram_id
+	}
+	return data
+}

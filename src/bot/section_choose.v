@@ -9,7 +9,7 @@ fn (app App) confirm_user_choice(result Result) ! {
 	section := user.confirm_section
 	section_name := user.confirm_section_name
 	println('Confirm ${section_name} ${section}')
-	set_user_track(app, user, section)!
+	set_user_track(app, user, section, section_name, user.sub_category_name)!
 }
 
 [starts_with: '/']
@@ -20,7 +20,13 @@ fn (app App) show_section_choose(result Result) ! {
 		category := user.category
 		mut reply_markup := InlineKeyboardMarkup{}
 		mut text := ''
-		if number < 1000 {
+		if number == 999{
+			println('$user.sub_category_name $user.sub_category')
+			ask_user_track(app, mut user, '${user.sub_category}/today/', user.sub_category_name,
+					user.category_name)!
+			return
+		}
+		else if number < 1000 {
 			mut count := 1
 			mut i := 1
 			// app.db.load_category(user)
@@ -49,10 +55,15 @@ fn (app App) show_section_choose(result Result) ! {
 					user.category_name)!
 				return
 			}
+			text += match user.lang{
+				'lv' { '/999 _Visas nodaļas._\n' }
+				'ru' { '/999 _Все разделы._\n' }
+				else { '/999 _All sections._\n' }
+			}
 			text += match user.lang {
-				'lv' { '⬆️ Izvēlaties nodaļu.❗️' }
-				'ru' { '⬆️ Выберите раздел.❗️' }
-				else { '⬆️ Choose a section ❗️' }
+				'lv' { '⬆️ *Izvēlaties nodaļu.*❗️' }
+				'ru' { '⬆️ *Выберите раздел.*❗️' }
+				else { '⬆️ *Choose a section* ❗️' }
 			}
 			reply_markup = get_back_button(user.lang)
 		}

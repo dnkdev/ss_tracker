@@ -21,8 +21,8 @@ pub fn (ss SSBase) save_ss_table() ! {
 	os.write_file('${bot.save_dir}/${to_safe_str(ss.url)}.json', json.encode_pretty(ss))!
 }
 
-pub fn (ss SSBase) load_ss_table() !SSBase {
-	full_url := '${bot.save_dir}/${to_url_str(ss.url)}.json'
+pub fn load_ss_table(url string) !SSBase {
+	full_url := '${bot.save_dir}/${to_safe_str(url)}.json'
 	file := os.read_file(full_url)!
 	data := json.decode(SSBase, file)!
 	return data
