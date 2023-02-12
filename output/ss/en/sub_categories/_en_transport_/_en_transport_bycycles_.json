@@ -1,0 +1,19 @@
+{
+  "Children": "/en/transport/bycycles/children/",
+  "Children's for tots": "/en/transport/bycycles/childrens-for-tots/",
+  "Teenage": "/en/transport/bycycles/teen/",
+  "BMX": "/en/transport/bycycles/bmx/",
+  "Classic": "/en/transport/bycycles/classical-ordinary/",
+  "Female": "/en/transport/bycycles/female/",
+  "Folding": "/en/transport/bycycles/folding/",
+  "Highway sports": "/en/transport/bycycles/highway-sports/",
+  "Hybrid (electrical)": "/en/transport/bycycles/hybrid-electrical/",
+  "Mountain": "/en/transport/bycycles/mountain/",
+  "Scooters": "/en/transport/bycycles/scooters/",
+  "Segways": "/en/transport/bycycles/segways/",
+  "Tandem": "/en/transport/bycycles/tandem/",
+  "Another": "/en/transport/bycycles/others/",
+  "Spare parts and accessories": "/en/transport/bycycles/spare-parts-and-accessories/",
+  "Bicycle rent": "/en/transport/transports-rent/bicycles/",
+  "Other": "/en/transport/bycycles/other/"
+}

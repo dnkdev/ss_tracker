@@ -3,7 +3,7 @@ module bot
 import json
 import time
 import os
-import parser { to_safe_str, to_url_str }
+import reader { to_safe_str }
 
 pub struct SSBase {
 	head_line []string
@@ -14,7 +14,7 @@ mut:
 }
 
 const (
-	save_dir = 'tables'
+	save_dir = 'output/tables'
 )
 
 pub fn (ss SSBase) save_ss_table() ! {

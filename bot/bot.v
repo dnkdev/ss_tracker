@@ -7,7 +7,7 @@ import database { Database, create_db_connection }
 
 struct App {
 	vt.Bot
-	db.Database
+	db Database
 }
 
 const (

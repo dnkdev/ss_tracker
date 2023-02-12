@@ -7,7 +7,6 @@ import os
 const (
 	log_file_name = 'bot_log.txt'
 )
-
 fn main() {
 	mut file := os.open_append(log_file_name)!
 	mut logger := log.Log{
@@ -16,8 +15,9 @@ fn main() {
 		output_file_name: log_file_name
 		ofile: file
 	}
-	bot.start_bot() or {
-		logger.fatal('$err')
+	bot.start_bot(logger) or {
+		// logger.fatal('${err}')
+		panic(err)
 	}
 	file.close()
 }

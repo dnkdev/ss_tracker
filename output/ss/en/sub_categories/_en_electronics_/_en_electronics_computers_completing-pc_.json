@@ -1,0 +1,15 @@
+{
+  "CPU": "/en/electronics/computers/completing-pc/cpu/",
+  "HDD": "/en/electronics/computers/completing-pc/hdd/",
+  "SSD": "/en/electronics/computers/completing-pc/ssd/",
+  "RAM": "/en/electronics/computers/completing-pc/ram/",
+  "DVD, Blu-ray": "/en/electronics/computers/completing-pc/cd-rom-dvd/",
+  "Cases": "/en/electronics/computers/completing-pc/cases/",
+  "Controllers": "/en/electronics/computers/completing-pc/controllers/",
+  "Motherboards": "/en/electronics/computers/completing-pc/motherboards/",
+  "Network cards": "/en/electronics/computers/completing-pc/network-cards/",
+  "Video": "/en/electronics/computers/completing-pc/video/",
+  "Accessories and cables": "/en/electronics/computers/completing-pc/accessories-and-cables/",
+  "Parts for repair": "/en/electronics/computers/completing-pc/parts-for-repair/",
+  "Other": "/en/electronics/computers/completing-pc/other/"
+}

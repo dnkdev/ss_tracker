@@ -1,12 +1,10 @@
 module bot
 
-import vtelegram { InlineKeyboardButton, InlineKeyboardMarkup }
 import net.http
 import net.html
 import time
 
-
-fn get_ss_table(scrap_url string) !SSBase {
+fn get_local_table(scrap_url string) !SSBase {
 	ss := load_ss_table(scrap_url)!
 	return ss
 }
@@ -19,29 +17,30 @@ fn get_last_number_from_table(ss SSBase) !int {
 	}
 }
 
-fn ss_http_request(scrap_url string)!http.Response{
-	config := http.FetchConfig{
-		user_agent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/109.0'
-	}
-	response := http.fetch(http.FetchConfig{ ...config, url: bot.end_point + scrap_url }) !
+fn ss_http_request(scrap_url string) !http.Response {
+	// config := http.FetchConfig{
+	// 	user_agent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/109.0'
+	// }
+	println(end_point + scrap_url)
+	response := http.get(end_point + scrap_url)!
+	//http.fetch(http.FetchConfig{ ...config, url: end_point + scrap_url })!
 	return response
 }
 
-fn ss_scrap(app App, scrap_url string) {
+fn ss_scrap(mut app App, scrap_url string) {
 	if scrap_url == '' {
 		println('SS url for scraping is empty!')
 		return
 	}
-	
+
 	time.sleep(500 * time.millisecond)
 	response := ss_http_request(scrap_url) or {
-		eprintln(err)
-		// http.Response{}
+		app.log.info('ss_http_request $err')
 		return
 	}
-	if response.status_code != 200{
+	if response.status_code != 200 {
 		println('SS Response Status Code ${response.status_code}')
-		return 
+		return
 	}
 	// println('${response.status_code}')
 	mut document := html.parse(response.body)
@@ -66,7 +65,6 @@ fn ss_scrap(app App, scrap_url string) {
 					}
 				}
 				if k == 'id' && v.contains('tr_') && !v.contains('tr_bnr') {
-					
 					number := v.split('_')[1]
 					mut text_tag := tag.get_tags_by_attribute_value('id', 'dm_${number}')
 					if text_tag[0].content == '' {
@@ -125,27 +123,37 @@ fn ss_scrap(app App, scrap_url string) {
 	}
 	//
 	mut new_local := false
-	local_table := get_ss_table(scrap_url) or {
+	local_table := get_local_table(scrap_url) or {
 		new_base.save_ss_table() or { eprintln(err) }
 		new_local = true
 		new_base
 		// println('Failed load a local table.')
 		// return
 	}
+
+	//
+	//
+	//
+	if new_base.data.len == 0 {
+		println('Wrong table: ${new_base.url}')
+		app.db.delete_tracker_with_url(new_base.url)
+		return
+	}
 	last_number := get_last_number_from_table(local_table) or { 0 }
 
 	mut found_last_id := -1
-	//println('Last_number = ${last_number}')
+	// println('Last_number = ${last_number}')
 	for i, b in new_base.data {
 		if b[0].int() == last_number {
-			//println('HERE IS LAST ${last_number} ${b[0]}')
+			// println('HERE IS LAST ${last_number} ${b[0]}')
 			found_last_id = i
 			break
 		}
 	}
 	if found_last_id == -1 {
 		for i := 0; i < 30; i++ {
-			if new_base.data[i][0] == local_table.data[i][0] {
+			if local_table.data.len > i && new_base.data.len > i
+				&& new_base.data[i][0] == local_table.data[i][0] {
 				println('SS found another last ${new_base.data[i][0]}')
 				found_last_id = i
 				break
@@ -153,31 +161,33 @@ fn ss_scrap(app App, scrap_url string) {
 		}
 	}
 	if found_last_id == 0 && new_local == false { // 0 here mean that it is last already distributed to users
-		//println('SS already distributed ${scrap_url}')
+		// println('SS already distributed ${scrap_url}')
 		return
 	}
 	found_last_id = if found_last_id == -1 { 0 } else { found_last_id }
 	mut head_len := new_base.data[0].len
 	head_len -= 5
-	for i := 0; i <= found_last_id; i++ {
-		mut text := ''
-		//println('$i $headers ${new_base.data[i]}')
-		//for a := new_base.data[0].len
-		if head_len > 0{
+	if head_len > 0 {
+		for i := 0; i <= found_last_id; i++ {
+			mut text := ''
+			// println('$i $headers ${new_base.data[i]}')
+			// for a := new_base.data[0].len
+
 			for a in 0 .. head_len {
-				if headers.len <= head_len && headers.len != 0 && a < headers.len{
+				if headers.len <= head_len && headers.len != 0 && a < headers.len {
 					text += '*${headers[a]}*: '
 				}
-				if a+5 < new_base.data[i].len{
-					text += '${new_base.data[i][a + 5]}\n'
-				}
-				else
-				{
-					text+='\n'
+				if a + 5 < new_base.data[i].len {
+					if i < new_base.data.len {
+						text += '${new_base.data[i][a + 5]}\n'
+					}
+				} else {
+					text += '\n'
 				}
 			}
+
+			distribute_to_users(mut app, text, new_base, i, scrap_url)
 		}
-		distribute_to_users(app, text, new_base, i, scrap_url)
+		new_base.save_ss_table() or { eprintln(err) }
 	}
-	new_base.save_ss_table() or { eprintln(err) }
 }

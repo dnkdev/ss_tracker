@@ -1,5 +1,5 @@
 Module{
-	name: 'ss_parser'
+	name: 'ss_tracker'
 	description: ''
 	version: ''
 	license: 'GPL v3'

@@ -15,6 +15,6 @@ pub fn new_app() &App{
    // app.serve_static('/favicon.ico', 'favicon.ico')
    return app
 }
-pub fn start_server(app App){
+pub fn start_server(mut app App){
 	vweb.run(app, 8080)
 }
