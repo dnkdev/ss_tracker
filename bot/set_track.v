@@ -1,7 +1,8 @@
-module bot
+module main
 
-import database { Tracker, User }
+import database { Tracker, User,add_user_tracker }
 import time
+import rand
 
 fn ask_user_track(mut app App, mut user User, section string, section_name string, subcategory_name string) ! {
 	mut text := ''
@@ -28,13 +29,14 @@ fn set_user_track(mut app App, user User, section string, section_name string, s
 	println('${time.now()} User track has been set ${user.telegram_id} ${section}')
 	mut text := ''
 	tr := Tracker{
+		id: rand.u8()
 		telegram_id: user.telegram_id
 		section_url: section
 		section_name: section_name
 		subcategory_name: subcategory_name
 		created_at: time.now()
 	}
-	if app.db.add_user_tracker(user, tr) {
+	if add_user_tracker(user, tr, false) {
 		text += match user.lang {
 			'lv' { '✅ Sadaļa *${user.confirm_section_name}* tagad tiks izsekota!' }
 			'ru' { '✅ Раздел *${user.confirm_section_name}* теперь отслеживается!' }
@@ -42,9 +44,9 @@ fn set_user_track(mut app App, user User, section string, section_name string, s
 		}
 	} else {
 		text += match user.lang {
-			'lv' { '‼️ Sadaļa *${user.confirm_section_name}* jau ir izsekošanas režīmā, uzstādiet filtru lai izsekot vel vienu reizi, izvēlaties citu, vai izslēdzat izsekošanu galvenajā izvelnē!' }
-			'ru' { '‼️ Раздел *${user.confirm_section_name}* уже отслеживается вами, сперва установите фильтр, либо выберите другой раздел или отключите отслеживание в главном меню!' }
-			else { '‼️ Section *${user.confirm_section_name}* is already tracked, set a filter for adding another one, or you can select the other section or turn off track in the user menu!' }
+			'lv' { '‼️ Sadaļa *${user.confirm_section_name}* jau ir izsekošanas režīmā, izvēlaties citu, vai izslēdzat izsekošanu galvenajā izvelnē!' }
+			'ru' { '‼️ Раздел *${user.confirm_section_name}* уже отслеживается вами, выберите другой раздел или отключите отслеживание в главном меню!' }
+			else { '‼️ Section *${user.confirm_section_name}* is already tracked, you can select the other section or turn off track in the user menu!' }
 		}
 	}
 	mut to_user := user

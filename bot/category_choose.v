@@ -1,4 +1,4 @@
-module bot
+module main
 
 import vtelegram { InlineKeyboardButton, InlineKeyboardMarkup, Result }
 import database { User }

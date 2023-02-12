@@ -1,4 +1,4 @@
-module bot
+module main
 
 import vtelegram { InlineKeyboardButton, InlineKeyboardMarkup, Result }
 import reader { read_second_categories, read_sections }
@@ -20,7 +20,7 @@ fn (mut app App) all_category_plus(result Result) ! {
 	mut user := app.db.user_from_result(result)!
 	// section_name := user.confirm_section_name
 	section := user.confirm_section
-	resp := http.get(end_point + section)!
+	resp := http.get(ss_end_point + section)!
 	if resp.status_code == 200 {
 		mut document := html.parse(resp.body)
 		// tags := document.get_tags_by_class_name('msg2')
@@ -70,7 +70,7 @@ fn (mut app App) confirm_category_plus(result Result) ! {
 }
 
 fn check_ss_on_categories_plus(mut app App, mut user User, section string, section_name string, sub_category_name string) InlineKeyboardMarkup {
-	response := http.get(end_point + section) or {
+	response := http.get(ss_end_point + section) or {
 		println('check_ss_on_categories_plus ${err}')
 		return InlineKeyboardMarkup{}
 	}

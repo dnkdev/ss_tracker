@@ -2,6 +2,9 @@
 tables/
 main
 ss_tracker
+ssbot
+ssparser
+run
 *.exe
 *.exe~
 *.so

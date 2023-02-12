@@ -1,6 +1,5 @@
 module main
 
-import time
 import os
 
 const (
@@ -40,11 +39,11 @@ fn main() {
 				result
 			}
 			if result.compare(local_table) && !is_new_local {
-				// eprintln('compare error')
-				// exit(0)
+				eprintln('compare error')
+				exit(0)
 			}
 			ads := result.get_ads_to_number(local_table.get_last_number())
-			save_local_table(result)or {
+			save_local_table(result) or {
 				eprintln(err)
 				exit(5)
 			}

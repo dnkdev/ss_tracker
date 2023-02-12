@@ -27,7 +27,14 @@ fn process_tracker_file(file_name string, result SSAds, ads []Ad) {
 	mut app := vt.Bot{
 		token: token.str()
 	}
-	for ad in ads{
+	for ad in ads {
+		println('${ad.region} == ${tracker.filter}')
+		if ad.region != '' && tracker.filter != '' {
+			words := tracker.filter.split(' ')
+			if !ad.region.contains_any_substr(words) {
+				continue
+			}
+		}
 		mut c_text := ''
 		for i, h in result.head_line {
 			if ad.columns.len > i {
@@ -45,7 +52,7 @@ fn process_tracker_file(file_name string, result SSAds, ads []Ad) {
 			continue
 		}
 	}
-	println('${tracker.section_url} send to ${tracker.telegram_id}')
+	// println('${tracker.section_url} send to ${tracker.telegram_id}')
 }
 
 fn distribute_ads(result SSAds, ads []Ad) {

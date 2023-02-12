@@ -1,4 +1,4 @@
-module bot
+module main
 
 import vtelegram { InlineKeyboardButton, InlineKeyboardMarkup }
 import database { Tracker }
@@ -27,7 +27,7 @@ pub fn get_filter_regions_buttons(tracker Tracker, lang string) !InlineKeyboardM
 		buttons << [
 			InlineKeyboardButton{
 				text: d
-				callback_data: 'region_${tracker.id}:${d}'
+				callback_data: 'r_${tracker.id}:${d}'
 			},
 		]
 	}
@@ -50,11 +50,11 @@ pub fn get_tracker_handle_button(tracker Tracker, lang string) InlineKeyboardMar
 	buttons << [
 		InlineKeyboardButton{
 			text: text_delete
-			callback_data: 'delete_${tracker.id}'
+			callback_data: 'd_${tracker.id}'
 		},
 		InlineKeyboardButton{
 			text: text_filters
-			callback_data: 'filter_${tracker.id}'
+			callback_data: 'f_${tracker.id}'
 		},
 	]
 	reply_markup := InlineKeyboardMarkup{buttons}
