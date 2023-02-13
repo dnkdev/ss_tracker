@@ -28,7 +28,7 @@ fn process_tracker_file(file_name string, result SSAds, ads []Ad) {
 		token: token.str()
 	}
 	for ad in ads {
-		println('${ad.region} == ${tracker.filter}')
+		// println('${ad.region} == ${tracker.filter}')
 		if ad.region != '' && tracker.filter != '' {
 			words := tracker.filter.split(' ')
 			if !ad.region.contains_any_substr(words) {
@@ -56,6 +56,9 @@ fn process_tracker_file(file_name string, result SSAds, ads []Ad) {
 }
 
 fn distribute_ads(result SSAds, ads []Ad) {
+	if ads.len == 0 {
+		return
+	}
 	url := result.url
 	true_name := to_safe_str(url.all_after('.com')) + '.json'
 	if !os.exists(tracker_dir) {

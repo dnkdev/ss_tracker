@@ -34,7 +34,6 @@ pub fn read_second_categories(lang string, chosen_cat string) !map[string]json.A
 
 pub fn read_categories(lang string) !map[string]json.Any {
 	path := '${reader.path_dir}${lang}.json'
-	// println(path+'.json <-------------')
 	result := os.read_file(path)!
 	first := json.raw_decode(result)!
 	return first.as_map()

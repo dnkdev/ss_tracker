@@ -4,7 +4,8 @@ import time
 import reader { to_url_str }
 import os
 
-fn bot_check(mut bot os.Process) {
+fn bot_check() {
+	mut bot := new_process('ssbot')
 	for {
 		if !bot.is_alive() {
 			mut file := open_file('run_log.txt', 'a') or {
@@ -18,7 +19,7 @@ fn bot_check(mut bot os.Process) {
 			bot = new_process('ssbot')
 			bot.run()
 		}
-		time.sleep(30_000 * time.millisecond)
+		time.sleep(60_000 * time.millisecond)
 	}
 }
 
@@ -26,11 +27,10 @@ fn parse_check() {
 	for {
 		// files := walk_ext('output/tables/', '.json')
 		user_trackers := walk_ext('output/trackers/', '.json')
-		// for f in files {
-		// url := to_url_str(f)
+		mut parsers := []os.Process{}
 		for ut in user_trackers {
-			// if file_name(ut) == f.all_after('.com') {
 			mut p := new_process('ssparser')
+			parsers << p
 			p.set_args([
 				'https://ss.com${to_url_str(file_name(ut).trim_right('.json'))}',
 			])
@@ -41,17 +41,24 @@ fn parse_check() {
 			if res != '' {
 				println('res: ${res}')
 			}
-			// println('pau pau ${ut}')
-			//}
 		}
-		time.sleep(60_000 * time.millisecond)
-		//}
+		time.sleep(90_000 * time.millisecond)
+		for mut p in parsers {
+			if p.is_alive() {
+				println('${time.now()} Process ${p.pid}, ${p.code}, ${p.status} ${p.err}. killing...')
+				p.signal_kill()
+				res := p.stdout_read().trim_indent()
+				if res != '' {
+					println('res2: ${res}')
+				}
+				p.close()
+			}
+		}
 	}
 }
 
 mut threads := []thread{}
-mut bot := new_process('ssbot')
-threads << spawn bot_check(mut bot)
+threads << spawn bot_check()
 threads << spawn parse_check()
 
 threads.wait()

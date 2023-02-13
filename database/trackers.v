@@ -8,25 +8,23 @@ import reader
 //[table: 'trackers']
 pub struct Tracker {
 pub:
-	id               i64 //[primary; sql: serial]
-	telegram_id      i64
-	section_name     string
-	section_url      string
+	id           i64 //[primary; sql: serial]
+	telegram_id  i64
+	section_name string
+	section_url  string
 pub mut:
 	subcategory_name string
-	filter     string    //[default: '']
-	created_at time.Time //[sql_type: 'DATETIME']
+	filter           string    //[default: '']
+	created_at       time.Time //[sql_type: 'DATETIME']
 	// deleted_at  time.Time   [sql_type: 'DATETIME']
 }
 
-pub fn delete_user_tracker_with_id(user User,number int) bool{
+pub fn delete_user_tracker_with_id(user User, number int) bool {
 	trackers := get_user_trackers(user)
 	for tr in trackers {
 		if tr.id == number {
-			os.rm(
-				'output/trackers/${user.telegram_id}/${reader.to_safe_str(tr.section_url)}.json'
-			)or{
-				eprintln('delete_user_tracker_with_id $err')
+			os.rm('output/trackers/${user.telegram_id}/${reader.to_safe_str(tr.section_url)}.json') or {
+				eprintln('delete_user_tracker_with_id ${err}')
 				return false
 			}
 			return true
@@ -34,6 +32,7 @@ pub fn delete_user_tracker_with_id(user User,number int) bool{
 	}
 	return false
 }
+
 pub fn get_user_tracker_by_id(user User, number int) Tracker {
 	trackers := get_user_trackers(user)
 	for t in trackers {
@@ -48,27 +47,20 @@ pub fn update_user_tracker_filter_by_id(user User, trid int, filter string) bool
 	user_dir := 'output/trackers/${user.telegram_id}/'
 	trackers := get_user_trackers(user)
 	for tr in trackers {
-		if tr.id == trid{
-			file := os.read_file(user_dir + reader.to_safe_str(tr.section_url) + '.json') or { eprintln(err) continue }
-			mut tracker := json.decode(Tracker, file) or { eprintln(err) continue }
+		if tr.id == trid {
+			file := os.read_file(user_dir + reader.to_safe_str(tr.section_url) + '.json') or {
+				eprintln(err)
+				continue
+			}
+			mut tracker := json.decode(Tracker, file) or {
+				eprintln(err)
+				continue
+			}
 			tracker.filter = filter
 			add_user_tracker(user, tracker, true)
 			return true
 		}
 	}
-
-	// file_names := os.walk_ext(user_dir, '.json')
-	// for f in file_names {
-	// 	if i == trid {
-	// 		println(f)
-	// 		file := os.read_file(f) or { eprintln(err) continue }
-	// 		mut tracker := json.decode(Tracker, file) or { eprintln(err) continue }
-	// 		tracker.filter = filter
-	// 		tracker.subcategory_name += ' *${filter}*'
-	// 		add_user_tracker(user, tracker, true)
-	// 		return true
-	// 	}
-	// }
 	return false
 }
 
@@ -76,14 +68,20 @@ pub fn get_user_trackers(user User) []Tracker {
 	mut trackers := []Tracker{}
 	user_dir := 'output/trackers/${user.telegram_id}/'
 	dir_content := os.ls(user_dir) or {
-		//eprintln('get_user_trackers ls ${err}')
+		// eprintln('get_user_trackers ls ${err}')
 		return trackers
 	}
 	for instance in dir_content {
 		if !os.is_dir_empty(user_dir) {
 			if instance.ends_with('.json') {
-				file := os.read_file(user_dir + instance) or { eprintln(err) continue }
-				tracker := json.decode(Tracker, file) or { eprintln(err) continue }
+				file := os.read_file(user_dir + instance) or {
+					eprintln(err)
+					continue
+				}
+				tracker := json.decode(Tracker, file) or {
+					eprintln(err)
+					continue
+				}
 				trackers << tracker
 			}
 		}

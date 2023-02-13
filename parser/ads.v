@@ -112,7 +112,6 @@ fn check_tag_on_ads(main_tag html.Tag) []Ad {
 					}
 					if column_info.trim_space() != '' {
 						columns << column_info
-						// println('///// ${column_info}')
 					}
 				}
 				mut ad := Ad{
@@ -136,7 +135,6 @@ fn get_ads(url string) !SSAds {
 		mut document := html.parse(response.body)
 		tags := document.get_tag('table')
 		for tag in tags {
-			// println(tag)
 			head_line := check_tag_on_headline(tag)
 			ads := check_tag_on_ads(tag)
 			if ads.len > 0 {
@@ -153,3 +151,4 @@ fn get_ads(url string) !SSAds {
 		return error('get_ads response error ${response.status_code} ${response.status_msg} ${response.header}')
 	}
 }
+

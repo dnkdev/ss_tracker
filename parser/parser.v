@@ -1,6 +1,7 @@
 module main
 
 import os
+import time
 
 const (
 	ss_end_point = 'https://ss.com'
@@ -29,17 +30,14 @@ fn main() {
 			exit(1)
 		}
 		if result != SSAds{} {
-			mut is_new_local := false
 			local_table := load_local_table(result.url) or {
 				save_local_table(result) or {
 					eprintln(err)
 					exit(4)
 				}
-				is_new_local = true
 				result
 			}
-			if result.compare(local_table) && !is_new_local {
-				eprintln('compare error')
+			if result.compare(local_table) { // true == tables are equal
 				exit(0)
 			}
 			ads := result.get_ads_to_number(local_table.get_last_number())
@@ -47,7 +45,10 @@ fn main() {
 				eprintln(err)
 				exit(5)
 			}
-			distribute_ads(result, ads)
+			if time.since(local_table.updated_at) < time.hour * 12 {
+				distribute_ads(result, ads)
+			}
 		}
 	}
+	exit(0)
 }
