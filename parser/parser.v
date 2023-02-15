@@ -26,7 +26,7 @@ fn main() {
 			exit(3)
 		}
 		if result == SSAds{} {
-			eprintln('Provided url is not ad url ${url}')
+			eprintln('${time.now()} Zero ads on ${url}')
 			exit(1)
 		}
 		if result != SSAds{} {

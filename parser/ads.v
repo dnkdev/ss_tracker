@@ -45,6 +45,13 @@ fn (ads SSAds) get_ads_to_number(number int) []Ad {
 		}
 		r_ads << ad
 	}
+	if r_ads.len == ads.data.len { // check for removed ad
+		for i, ad in ads.data {
+			if ad.number == r_ads[i].number {
+				return r_ads[..i]
+			}
+		}
+	}
 	return r_ads
 }
 
@@ -151,4 +158,3 @@ fn get_ads(url string) !SSAds {
 		return error('get_ads response error ${response.status_code} ${response.status_msg} ${response.header}')
 	}
 }
-

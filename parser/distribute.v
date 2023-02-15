@@ -48,6 +48,9 @@ fn process_tracker_file(file_name string, result SSAds, ads []Ad) {
 			parse_mode: 'Markdown'
 			reply_markup: get_ad_buttons(ad)
 		) or {
+			if err.msg().contains('Error Code: 403') {
+				os.rmdir_all('output/trackers/${tracker.telegram_id}/') or { continue }
+			}
 			eprintln(err)
 			continue
 		}

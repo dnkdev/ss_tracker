@@ -131,7 +131,7 @@ fn (mut app App) show_section_choose(result Result) ! {
 		mut reply_markup := InlineKeyboardMarkup{}
 		mut text := ''
 		if number == 999 {
-			println('${user.sub_category_name} ${user.sub_category}')
+			// println('${user.sub_category_name} ${user.sub_category}')
 			ask_user_track(mut app, mut user, '${user.sub_category}today/', user.sub_category_name,
 				user.category_name)!
 			return
