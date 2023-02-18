@@ -1,13 +1,13 @@
 module main
 
-import vtelegram { InlineKeyboardButton, InlineKeyboardMarkup, Result }
+import vtelegram { InlineKeyboardButton, InlineKeyboardMarkup, Update }
 import database { User }
 import reader { read_categories, read_second_categories }
 import time
 // import x.json2 as json
 
 [callback_query: 'back']
-fn (mut app App) go_back(result Result) ! {
+fn (mut app App) go_back(result Update) ! {
 	mut user := app.db.user_from_result(result)!
 	show_categories(mut app, mut user) or { println(err) }
 }
@@ -23,12 +23,12 @@ fn delete_last_message[T](mut app T, mut user User, message_id int) {
 }
 
 ['callback_query: starts_with: category_']
-fn (mut app App) show_second_choose(result Result) ! {
-	// println(result.query.data)
+fn (mut app App) show_second_choose(result Update) ! {
+	// println(result.callback_query.data)
 	mut user := app.db.user_from_result(result)!
-	user.category = result.query.data
+	user.category = result.callback_query.data
 	// search for category name data for display in the end
-	buts := result.query.message.reply_markup.inline_keyboard
+	buts := result.callback_query.message.reply_markup.inline_keyboard
 	for b in buts {
 		if b[0].callback_data.contains(user.category) {
 			user.category_name = b[0].text
@@ -36,7 +36,7 @@ fn (mut app App) show_second_choose(result Result) ! {
 		}
 	}
 	//
-	categories := read_second_categories(user.lang, result.query.data)!
+	categories := read_second_categories(user.lang, result.callback_query.data)!
 	mut text := ''
 	mut i := 1
 	for cat, _ in categories {

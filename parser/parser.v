@@ -26,7 +26,7 @@ fn main() {
 			exit(3)
 		}
 		if result == SSAds{} {
-			eprintln('${time.now()} Zero ads on ${url}')
+			//eprintln('${time.now()} Zero ads on ${url}')
 			exit(1)
 		}
 		if result != SSAds{} {
@@ -40,12 +40,12 @@ fn main() {
 			if result.compare(local_table) { // true == tables are equal
 				exit(0)
 			}
-			ads := result.get_ads_to_number(local_table.get_last_number())
 			save_local_table(result) or {
 				eprintln(err)
 				exit(5)
 			}
 			if time.since(local_table.updated_at) < time.hour * 12 {
+				ads := result.get_ads_to_number(local_table.get_last_number())
 				distribute_ads(result, ads)
 			}
 		}

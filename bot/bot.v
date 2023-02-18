@@ -41,8 +41,7 @@ pub fn start_bot(logger log.Log) !App {
 	}
 	app.log = logger
 	set_bot_commands(mut app)!
-	vt.poll(mut app,
-		dry_start: true
+	vt.start_polling(mut app,
 		delay_time: 1000
 		timeout: 11
 		allowed_updates: [

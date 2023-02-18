@@ -32,7 +32,15 @@ pub fn delete_user_tracker_with_id(user User, number int) bool {
 	}
 	return false
 }
-
+pub fn get_user_tracker_by_url(user User, url string) Tracker {
+	trackers := get_user_trackers(user)
+	for t in trackers {
+		if t.section_url == url {
+			return t
+		}
+	}
+	return Tracker{}
+}
 pub fn get_user_tracker_by_id(user User, number int) Tracker {
 	trackers := get_user_trackers(user)
 	for t in trackers {
@@ -43,7 +51,7 @@ pub fn get_user_tracker_by_id(user User, number int) Tracker {
 	return Tracker{}
 }
 
-pub fn update_user_tracker_filter_by_id(user User, trid int, filter string) bool {
+pub fn update_user_tracker_filter_by_id(user User, trid i64, filter string) bool {
 	user_dir := 'output/trackers/${user.telegram_id}/'
 	trackers := get_user_trackers(user)
 	for tr in trackers {

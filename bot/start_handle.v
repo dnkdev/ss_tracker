@@ -5,15 +5,15 @@ import vtelegram as vt
 import database { User, result_to_user }
 
 ['callback_query: en'; 'callback_query: lv'; 'callback_query: ru']
-fn (mut app App) select_language(result vt.Result) {
+fn (mut app App) select_language(result vt.Update) {
 	mut user := result_to_user(result)
-	user.lang = result.query.data
+	user.lang = result.callback_query.data
 	app.db.save_language(user) or { println(err) }
 	show_categories(mut app, mut user) or { println(err) }
 }
 
-['/start']
-fn (mut app App) on_start(result vt.Result) ! {
+[message:'/start']
+fn (mut app App) on_start(result vt.Update) ! {
 	reply_markup := get_language_buttons()
 	message := app.sendmessage(
 		chat_id: result.message.from.id

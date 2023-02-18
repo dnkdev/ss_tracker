@@ -1,13 +1,13 @@
 module main
 
-import vtelegram { InlineKeyboardButton, InlineKeyboardMarkup, Result }
+import vtelegram { InlineKeyboardButton, InlineKeyboardMarkup, Update }
 import reader { read_second_categories, read_sections }
 import database { User }
 import net.http
 import net.html
 
 [callback_query: 'yes']
-fn (mut app App) confirm_user_choice(result Result) ! {
+fn (mut app App) confirm_user_choice(result Update) ! {
 	user := app.db.user_from_result(result)!
 	section := user.confirm_section
 	section_name := user.confirm_section_name
@@ -16,7 +16,7 @@ fn (mut app App) confirm_user_choice(result Result) ! {
 }
 
 [callback_query: 'all_p']
-fn (mut app App) all_category_plus(result Result) ! {
+fn (mut app App) all_category_plus(result Update) ! {
 	mut user := app.db.user_from_result(result)!
 	// section_name := user.confirm_section_name
 	section := user.confirm_section
@@ -27,8 +27,8 @@ fn (mut app App) all_category_plus(result Result) ! {
 		tags := document.get_tag_by_attribute_value('id', 'head_line')
 		if tags.len != 0 {
 			app.deletemessage(
-				chat_id: result.query.message.chat.id
-				message_id: result.query.message.message_id
+				chat_id: result.callback_query.message.chat.id
+				message_id: result.callback_query.message.message_id
 			)!
 			ask_user_track(mut app, mut user, section, user.confirm_section_name, user.sub_category_name)!
 		} else {
@@ -46,10 +46,10 @@ fn (mut app App) all_category_plus(result Result) ! {
 }
 
 ['callback_query: starts_with: p_']
-fn (mut app App) confirm_category_plus(result Result) ! {
-	url := result.query.data
+fn (mut app App) confirm_category_plus(result Update) ! {
+	url := result.callback_query.data
 	mut user := app.db.user_from_result(result)!
-	for b in result.query.message.reply_markup.inline_keyboard {
+	for b in result.callback_query.message.reply_markup.inline_keyboard {
 		if b.len > 0 {
 			if b[0].callback_data == 'p_${url}' {
 				user.sub_category_name += ' ${b[0].text}'
@@ -63,8 +63,8 @@ fn (mut app App) confirm_category_plus(result Result) ! {
 		}
 	}
 	app.deletemessage(
-		chat_id: result.query.message.chat.id
-		message_id: result.query.message.message_id
+		chat_id: result.callback_query.message.chat.id
+		message_id: result.callback_query.message.message_id
 	)!
 	ask_user_track(mut app, mut user, url, user.confirm_section_name, user.sub_category_name)!
 }
@@ -122,8 +122,8 @@ fn check_ss_on_categories_plus(mut app App, mut user User, section string, secti
 	return InlineKeyboardMarkup{}
 }
 
-[starts_with: '/']
-fn (mut app App) show_section_choose(result Result) ! {
+['message:starts_with: /']
+fn (mut app App) show_section_choose(result Update) ! {
 	mut number := result.message.text.int()
 	if number != 0 {
 		mut user := app.db.user_from_result(result)!

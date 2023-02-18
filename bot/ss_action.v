@@ -1,16 +1,16 @@
 module main
 
-import vtelegram { Result }
+import vtelegram { Update }
 import net.html
 import time
 import encoding.utf8
 
 ['callback_query: starts_with: /msg']
-fn (mut app App) show_full_text(result Result) ! {
-	// println('Wait sec. ${result.query.data}')
-	text := get_ss_full_text('/msg${result.query.data}')!
-	reply_markup := get_link_button('${ss_end_point}/msg${result.query.data}')
-	message := result.query.message
+fn (mut app App) show_full_text(result Update) ! {
+	// println('Wait sec. ${result.callback_query.data}')
+	text := get_ss_full_text('/msg${result.callback_query.data}')!
+	reply_markup := get_link_button('${ss_end_point}/msg${result.callback_query.data}')
+	message := result.callback_query.message
 	if message.caption.len + text.len > 1000 {
 		mut new_text := ''
 		if 1000 - message.caption.len > 0 {

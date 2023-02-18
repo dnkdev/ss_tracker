@@ -31,6 +31,23 @@ pub fn get_filter_regions_buttons(tracker Tracker, lang string) !InlineKeyboardM
 			},
 		]
 	}
+	customtext := match lang {
+		'lv' {
+			'🏷 Litotāja filtrs'
+		}
+		'ru' {
+			'🏷 Пользовательский фильтр'
+		}
+		else {
+			'🏷 Custom filter'
+		}
+	}
+	buttons << [
+		InlineKeyboardButton{
+			text: customtext
+			callback_data: 'rcustom_${tracker.id}'
+		},
+	]
 	reply_markup := InlineKeyboardMarkup{buttons}
 	return reply_markup
 }

@@ -137,7 +137,10 @@ fn check_tag_on_ads(main_tag html.Tag) []Ad {
 }
 
 fn get_ads(url string) !SSAds {
-	response := http.get(url)!
+	response := http.get(url) or {
+		eprintln('${time.now()} get_ads http.get ${url}\n$err')
+		return error('${time.now()} get_ads http.get ${url}\n$err')
+	}
 	if response.status_code == 200 {
 		mut document := html.parse(response.body)
 		tags := document.get_tag('table')
@@ -155,6 +158,7 @@ fn get_ads(url string) !SSAds {
 		}
 		return SSAds{}
 	} else {
-		return error('get_ads response error ${response.status_code} ${response.status_msg} ${response.header}')
+		eprintln('${time.now()} get_ads response error ${response.status_code} ${response.status_msg} ${response.header}')
+		return error('${time.now()} get_ads response error ${response.status_code} ${response.status_msg} ${response.header}')
 	}
 }
