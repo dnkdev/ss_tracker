@@ -26,7 +26,8 @@ fn delete_last_message[T](mut app T, mut user User, message_id int) {
 fn (mut app App) show_second_choose(result Update) ! {
 	// println(result.callback_query.data)
 	mut user := app.db.user_from_result(result)!
-	user.category = result.callback_query.data
+	data := result.callback_query.data.trim_string_left('category_')
+	user.category = data
 	// search for category name data for display in the end
 	buts := result.callback_query.message.reply_markup.inline_keyboard
 	for b in buts {
@@ -36,7 +37,7 @@ fn (mut app App) show_second_choose(result Update) ! {
 		}
 	}
 	//
-	categories := read_second_categories(user.lang, result.callback_query.data)!
+	categories := read_second_categories(user.lang, data)!
 	mut text := ''
 	mut i := 1
 	for cat, _ in categories {

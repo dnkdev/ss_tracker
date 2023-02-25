@@ -12,7 +12,7 @@ fn (mut app App) select_language(result vt.Update) {
 	show_categories(mut app, mut user) or { println(err) }
 }
 
-[message:'/start']
+[message: '/start']
 fn (mut app App) on_start(result vt.Update) ! {
 	reply_markup := get_language_buttons()
 	message := app.sendmessage(

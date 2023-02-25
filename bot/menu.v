@@ -49,7 +49,7 @@ pub fn (mut app App) message_for_custom_filter(result Update) ! {
 
 ['callback_query: starts_with: rcustom_']
 pub fn (mut app App) set_custom_filter_my_tracker(result Update) ! {
-	mut trackerid := result.callback_query.data.int()
+	mut trackerid := result.callback_query.data.trim_string_left('rcustom_').int()
 	if trackerid != 0{
 		result.callback_query.message.delete(mut app)!
 		user := app.db.user_from_result(result)!
@@ -70,7 +70,7 @@ pub fn (mut app App) set_custom_filter_my_tracker(result Update) ! {
 ['callback_query: starts_with: r_']
 pub fn (mut app App) set_region_my_tracker(result Update) ! {
 	user := app.db.user_from_result(result)!
-	data := result.callback_query.data.split(':')
+	data := result.callback_query.data.trim_string_left('r_').split(':')
 	if data.len == 0 {
 		return
 	}
@@ -128,7 +128,7 @@ fn category_without_filter(mut app App, user User, url string) !bool {
 
 ['callback_query: starts_with: f_']
 pub fn (mut app App) filter_my_tracker(result Update) ! {
-	mut number := result.callback_query.data.u16()
+	mut number := result.callback_query.data.trim_string_left('f_').u16()
 	if number != 0 {
 		user := app.db.user_from_result(result)!
 		tracker := get_user_tracker_by_id(user, number)
@@ -162,7 +162,7 @@ pub fn (mut app App) filter_my_tracker(result Update) ! {
 
 ['callback_query: starts_with: d_']
 pub fn (mut app App) delete_my_tracker(result Update) ! {
-	mut number := result.callback_query.data.u16()
+	mut number := result.callback_query.data.trim_string_left('d_').u16()
 	if number != 0 {
 		user := app.db.user_from_result(result)!
 		delete_user_tracker_with_id(user,number)
@@ -179,7 +179,7 @@ pub fn (mut app App) delete_my_tracker(result Update) ! {
 
 ['message:starts_with: /my']
 pub fn (mut app App) hanlde_my_tracker(result Update) ! {
-	mut number := result.message.text.u16()
+	mut number := result.message.text.trim_string_left('/my').u16()
 	if number != 0 {
 		mut user := app.db.user_from_result(result)!
 		tracker := get_user_tracker_by_id(user, number)

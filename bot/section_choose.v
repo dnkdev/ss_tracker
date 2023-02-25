@@ -47,7 +47,7 @@ fn (mut app App) all_category_plus(result Update) ! {
 
 ['callback_query: starts_with: p_']
 fn (mut app App) confirm_category_plus(result Update) ! {
-	url := result.callback_query.data
+	url := result.callback_query.data.trim_string_left('p_')
 	mut user := app.db.user_from_result(result)!
 	for b in result.callback_query.message.reply_markup.inline_keyboard {
 		if b.len > 0 {
@@ -124,7 +124,7 @@ fn check_ss_on_categories_plus(mut app App, mut user User, section string, secti
 
 ['message:starts_with: /']
 fn (mut app App) show_section_choose(result Update) ! {
-	mut number := result.message.text.int()
+	mut number := result.message.text.trim_string_left('/').int()
 	if number != 0 {
 		mut user := app.db.user_from_result(result)!
 		category := user.category

@@ -8,8 +8,9 @@ import encoding.utf8
 ['callback_query: starts_with: /msg']
 fn (mut app App) show_full_text(result Update) ! {
 	// println('Wait sec. ${result.callback_query.data}')
-	text := get_ss_full_text('/msg${result.callback_query.data}')!
-	reply_markup := get_link_button('${ss_end_point}/msg${result.callback_query.data}')
+	data := result.callback_query.data.trim_string_left('/msg')
+	text := get_ss_full_text('/msg${data}')!
+	reply_markup := get_link_button('${ss_end_point}/msg${data}')
 	message := result.callback_query.message
 	if message.caption.len + text.len > 1000 {
 		mut new_text := ''
