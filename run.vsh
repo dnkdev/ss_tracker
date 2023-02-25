@@ -8,7 +8,7 @@ fn bot_check() {
 	mut bot := new_process('ssbot')
 	for {
 		if !bot.is_alive() {
-			mut file := open_file('run_log.txt', 'a') or {
+			mut file := open_file('run.log', 'a') or {
 				println(err)
 				continue
 			}

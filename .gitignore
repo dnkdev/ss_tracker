@@ -10,6 +10,7 @@ run
 *.so
 *.dylib
 *.dll
+*.txt
 
 # Ignore binary output folders
 bin/

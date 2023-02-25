@@ -30,7 +30,7 @@ fn get_key() !string {
 	return key['key']!.str()
 }
 
-pub fn start_bot(logger log.Log) !App {
+pub fn start_bot() !App {
 	db := create_db_connection()!
 	token := get_key()!
 	mut app := App{
@@ -39,15 +39,18 @@ pub fn start_bot(logger log.Log) !App {
 		},
 		db
 	}
-	app.log = logger
+	app.log.set_level(.info)
+	app.log.set_full_logpath('./bot.log')
+	
 	set_bot_commands(mut app)!
-	vt.start_polling(mut app,
+	polling_config := vt.PollingConfig[vt.Regular]{
 		delay_time: 1000
 		timeout: 11
 		allowed_updates: [
 			'message',
 			'callback_query',
 		]
-	)
+	}
+	vt.start_polling(mut app, polling_config)
 	return app
 }
